@@ -1,0 +1,47 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ilyra_attendease_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    networks:
+      - ilyra_attendease_network
+
+  webserver:
+    image: nginx:alpine
+    container_name: ilyra_attendease_nginx
+    restart: unless-stopped
+    ports:
+      - "8002:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - ilyra_attendease_network
+
+  db:
+    image: mysql:8.0
+    container_name: ilyra_attendease_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ilyra_attendease
+      MYSQL_ROOT_PASSWORD: flugplatz
+      MYSQL_PASSWORD: eaurouge
+      MYSQL_USER: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - ilyra_attendease_network
+
+networks:
+  ilyra_attendease_network:
+    driver: bridge
+
+volumes:
+  dbdata:

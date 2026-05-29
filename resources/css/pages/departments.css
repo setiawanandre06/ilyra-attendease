@@ -1,0 +1,10 @@
+.sortable { cursor: pointer; user-select: none; white-space: nowrap; }
+.sortable:hover { background: #EEECEA; }
+.sort-icon { font-size: 10px; opacity: 0.4; margin-left: 2px; }
+.sortable.asc .sort-icon::after  { content: ' ↑'; opacity: 1; }
+.sortable.desc .sort-icon::after { content: ' ↓'; opacity: 1; }
+.sortable.asc .sort-icon,
+.sortable.desc .sort-icon { opacity: 0; }
+
+#searchInput::placeholder { font-size: 12.5px; }
+.no-result { display: none; }

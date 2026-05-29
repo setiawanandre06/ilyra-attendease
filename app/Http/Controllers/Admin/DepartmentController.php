@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Department;
-
 use App\Http\Controllers\Controller;
+use App\Models\Department;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 
 class DepartmentController extends Controller
 {
@@ -18,7 +16,7 @@ class DepartmentController extends Controller
     {
         $allowedSorts = ['name', 'created_at', 'users_count'];
         $sort = in_array($request->get('sort'), $allowedSorts) ? $request->get('sort') : 'created_at';
-        $dir  = $request->get('dir') === 'desc' ? 'desc' : 'asc';
+        $dir = $request->get('dir') === 'desc' ? 'desc' : 'asc';
 
         $departments = Department::with('manager')
             ->withCount('users')
@@ -38,6 +36,7 @@ class DepartmentController extends Controller
     public function create()
     {
         $users = User::role('employee')->get();
+
         return view('admin.departments.create', compact('users'));
     }
 
@@ -55,7 +54,7 @@ class DepartmentController extends Controller
         // create department
         Department::create([
             'name' => $request->name,
-            'manager_id' => $request->manager_id
+            'manager_id' => $request->manager_id,
         ]);
 
         return redirect()->route('admin.departments.index')->with('success', 'Department created successfully.');
@@ -68,6 +67,7 @@ class DepartmentController extends Controller
     {
         // show the details of a department
         $department = Department::findOrFail($id);
+
         return view('admin.departments.show', compact('department'));
     }
 
@@ -79,6 +79,7 @@ class DepartmentController extends Controller
         // show edit form for a department
         $department = Department::findOrFail($id);
         $users = User::role('employee')->get();
+
         return view('admin.departments.edit', compact('department', 'users'));
     }
 
@@ -89,7 +90,7 @@ class DepartmentController extends Controller
     {
         // validate form
         $request->validate([
-            'name' => 'required|string|unique:departments,name,' . $id . '|max:255',
+            'name' => 'required|string|unique:departments,name,'.$id.'|max:255',
             'manager_id' => 'nullable|exists:users,id',
         ]);
 
@@ -99,7 +100,7 @@ class DepartmentController extends Controller
         // update department
         $department->update([
             'name' => $request->name,
-            'manager_id' => $request->manager_id
+            'manager_id' => $request->manager_id,
         ]);
 
         return redirect()->route('admin.departments.index')->with('success', 'Department updated successfully.');

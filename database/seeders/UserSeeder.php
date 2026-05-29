@@ -3,11 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class UserSeeder extends Seeder
 {
@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
         Permission::create(['name' => 'manage roles']);
 
         // Reset cached roles and permissions
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // create roles and assign created permissions
         $employeePermissions = Permission::whereIn('name', ['scan attendance', 'view own attendance'])->get();
@@ -51,7 +51,7 @@ class UserSeeder extends Seeder
         // $role->syncPermissions(Permission::all());
         $role->givePermissionTo(Permission::all());
 
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create default users
         $admin = User::create([

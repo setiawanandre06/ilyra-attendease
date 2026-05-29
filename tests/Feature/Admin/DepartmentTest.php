@@ -2,17 +2,16 @@
 
 namespace Tests\Feature\Admin;
 
-use App\Models\User;
 use App\Models\Department;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class DepartmentTest extends TestCase
 {
     use RefreshDatabase;
 
-    private user $admin;
+    private User $admin;
 
     protected function setUp(): void
     {

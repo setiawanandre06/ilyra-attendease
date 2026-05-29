@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\EmployeeController;
 use APp\Http\Controllers\Admin\OfficeLocationController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -24,13 +24,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('leaves', LeaveController::class);
 
     // HR & Admin
-    Route::middleware('role:hr|admin')->prefix('admin')->name('admin.')->group(function() {
+    Route::middleware('role:hr|admin')->prefix('admin')->name('admin.')->group(function () {
         Route::resource('employees', EmployeeController::class);
         Route::resource('departments', DepartmentController::class);
     });
 
     // Admin
-    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function() {
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::resource('office-locations', OfficeLocationController::class);
     });
 

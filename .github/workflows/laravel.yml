@@ -1,0 +1,64 @@
+name: Laravel CI
+
+on:
+  push:
+    branches: [ "main", "dev", "feature/*" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: mbstring, xml, ctype, iconv, mysql, sqlite, pdo_sqlite
+        coverage: none
+        tools: composer:v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Get Composer Cache Directory
+      id: composer-cache
+      run: |
+        echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+    - name: Cache Composer Dependencies
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-
+
+    - name: Install Composer Dependencies
+      run: composer install --prefer-dist --no-ansi --no-interaction --no-progress
+
+    - name: Install NPM Dependencies & Build Assets
+      run: |
+        npm ci
+        npm run build
+
+    - name: Prepare Application Environment
+      run: |
+        cp .env.example .env
+        php artisan key:generate
+
+    - name: Check Code Style (Laravel Pint)
+      run: vendor/bin/pint --test
+
+    - name: Run Tests (PHPUnit)
+      env:
+        DB_CONNECTION: sqlite
+        DB_DATABASE: ':memory:'
+      run: php artisan test
